@@ -215,7 +215,7 @@ def convertLabelsToDict(directory, save_path):
         y2 = yCenter + height/2 # Down-Right Corner
         
         # Creo numpy array per labels e boxes
-        labels = np.array(['1', '2', '3', '4'])
+        labels = np.array([str(label)])
         boxes = np.array([[x1, y1, x2, y2]])
 
         # Creazione dizionario

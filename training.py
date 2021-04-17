@@ -11,10 +11,10 @@ from transformations import normalize_01
 from utils import get_filenames_of_path, collate_double, convertLabelsToDict
 
 # Activate this function only the first time to create labels.py
-convertLabelsToDict(str("labels_txt"), str("heads/target/"))
+#convertLabelsToDict(str("labels_txt"), str("heads/target/"))
 
 # hyper-parameters
-params = {'BATCH_SIZE': 16,
+params = {'BATCH_SIZE': 1,
           'LR': 0.001,
           'PRECISION': 32,
           'CLASSES': 5,
@@ -81,14 +81,14 @@ from pytorch_lightning import seed_everything
 seed_everything(params['SEED'])
 
 # training validation test split
-inputs_train, inputs_valid, inputs_test = inputs[:12], inputs[12:16], inputs[16:]
-targets_train, targets_valid, targets_test = targets[:12], targets[12:16], targets[16:]
+inputs_train, inputs_valid, inputs_test = inputs[:1000], inputs[1001:1350], inputs[1351:]
+targets_train, targets_valid, targets_test = targets[:1000], targets[1001:1350], targets[1351:]
 
 # dataset training
 dataset_train = ObjectDetectionDataSet(inputs=inputs_train,
                                        targets=targets_train,
                                        transform=transforms_training,
-                                       use_cache=True,
+                                       use_cache=False,
                                        convert_to_format=None,
                                        mapping=mapping)
 
@@ -96,7 +96,7 @@ dataset_train = ObjectDetectionDataSet(inputs=inputs_train,
 dataset_valid = ObjectDetectionDataSet(inputs=inputs_valid,
                                        targets=targets_valid,
                                        transform=transforms_validation,
-                                       use_cache=True,
+                                       use_cache=False,
                                        convert_to_format=None,
                                        mapping=mapping)
 
@@ -104,7 +104,7 @@ dataset_valid = ObjectDetectionDataSet(inputs=inputs_valid,
 dataset_test = ObjectDetectionDataSet(inputs=inputs_test,
                                       targets=targets_test,
                                       transform=transforms_test,
-                                      use_cache=True,
+                                      use_cache=False,
                                       convert_to_format=None,
                                       mapping=mapping)
 
@@ -112,21 +112,21 @@ dataset_test = ObjectDetectionDataSet(inputs=inputs_test,
 dataloader_train = DataLoader(dataset=dataset_train,
                               batch_size=params['BATCH_SIZE'],
                               shuffle=True,
-                              num_workers=0,
+                              num_workers=4,
                               collate_fn=collate_double)
 
 # dataloader validation
 dataloader_valid = DataLoader(dataset=dataset_valid,
                               batch_size=1,
                               shuffle=False,
-                              num_workers=0,
+                              num_workers=4,
                               collate_fn=collate_double)
 
 # dataloader test
 dataloader_test = DataLoader(dataset=dataset_test,
                              batch_size=1,
                              shuffle=False,
-                             num_workers=0,
+                             num_workers=4,
                              collate_fn=collate_double)
 
 
@@ -191,3 +191,6 @@ trainer.max_epochs = params['MAXEPOCHS']
 trainer.fit(task,
             train_dataloader=dataloader_train,
             val_dataloaders=dataloader_valid)
+
+# start testing
+trainer.test(ckpt_path='best', test_dataloaders=dataloader_test)
