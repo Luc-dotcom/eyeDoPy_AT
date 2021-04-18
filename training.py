@@ -14,7 +14,7 @@ from utils import log_model_neptune
 
 
 # Activate this function only the first time to create labels.py
-convertLabelsToDict(str("labels_txt"), str("heads/target/"))
+#convertLabelsToDict(str("labels_txt"), str("heads/target/"))
 
 # hyper-parameters
 params = {'BATCH_SIZE': 16,
@@ -189,7 +189,7 @@ early_stopping_callback = EarlyStopping(monitor='Validation_mAP', patience=50, m
 # trainer init
 from pytorch_lightning import Trainer
 
-trainer = Trainer(gpus=1,
+trainer = Trainer(tpu_cores=8,
                   precision=params['PRECISION'],  # try 16 with enable_pl_optimizer=False
                   callbacks=[checkpoint_callback, learningrate_callback, early_stopping_callback],
                   default_root_dir="./Experiments",  # where checkpoints are saved to
