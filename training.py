@@ -115,7 +115,7 @@ dataset_test = ObjectDetectionDataSet(inputs=inputs_test,
 dataloader_train = DataLoader(dataset=dataset_train,
                               batch_size=params['BATCH_SIZE'],
                               shuffle=True,
-                              num_workers=6,
+                              num_workers=2,
                               collate_fn=collate_double
                               )
 
@@ -123,7 +123,7 @@ dataloader_train = DataLoader(dataset=dataset_train,
 dataloader_valid = DataLoader(dataset=dataset_valid,
                               batch_size=1,
                               shuffle=False,
-                              num_workers=6,
+                              num_workers=2,
                               collate_fn=collate_double
                               )
 
@@ -131,7 +131,7 @@ dataloader_valid = DataLoader(dataset=dataset_valid,
 dataloader_test = DataLoader(dataset=dataset_test,
                              batch_size=1,
                              shuffle=False,
-                             num_workers=6,
+                             num_workers=2,
                              collate_fn=collate_double
                               )
 
