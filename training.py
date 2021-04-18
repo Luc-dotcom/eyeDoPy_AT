@@ -84,8 +84,13 @@ from pytorch_lightning import seed_everything
 seed_everything(params['SEED'])
 
 # training validation test split
+<<<<<<< HEAD
 inputs_train, inputs_valid, inputs_test = inputs[:500], inputs[501:650], inputs[651:950]
 targets_train, targets_valid, targets_test = targets[:500], targets[501:650], targets[651:950]
+=======
+inputs_train, inputs_valid, inputs_test = inputs[:1000], inputs[1001:1350], inputs[1351:]
+targets_train, targets_valid, targets_test = targets[:1000], targets[1001:1350], targets[1351:]
+>>>>>>> f6c315b3b93d1effc92d449855a3da2ee8d3e4d2
 
 # dataset training
 dataset_train = ObjectDetectionDataSet(inputs=inputs_train,
@@ -116,27 +121,39 @@ dataloader_train = DataLoader(dataset=dataset_train,
                               batch_size=params['BATCH_SIZE'],
                               shuffle=True,
                               num_workers=6,
+<<<<<<< HEAD
                               collate_fn=collate_double,
                               pin_memory=True # Not present before
                               )
+=======
+                              collate_fn=collate_double)
+>>>>>>> f6c315b3b93d1effc92d449855a3da2ee8d3e4d2
 
 # dataloader validation
 dataloader_valid = DataLoader(dataset=dataset_valid,
                               batch_size=1,
                               shuffle=False,
                               num_workers=6,
+<<<<<<< HEAD
                               collate_fn=collate_double,
                               pin_memory=True # Not present before
                               )
+=======
+                              collate_fn=collate_double)
+>>>>>>> f6c315b3b93d1effc92d449855a3da2ee8d3e4d2
 
 # dataloader test
 dataloader_test = DataLoader(dataset=dataset_test,
                              batch_size=1,
                              shuffle=False,
                              num_workers=6,
+<<<<<<< HEAD
                              collate_fn=collate_double,
                               pin_memory=True # Not present before
                               )
+=======
+                             collate_fn=collate_double)
+>>>>>>> f6c315b3b93d1effc92d449855a3da2ee8d3e4d2
 
 
 # neptune logger
@@ -209,6 +226,7 @@ trainer.fit(task,
             val_dataloaders=dataloader_valid)
 
 # start testing
+<<<<<<< HEAD
 trainer.test(ckpt_path='best', test_dataloaders=dataloader_test)
 
 # log model
@@ -217,3 +235,6 @@ log_model_neptune(checkpoint_path=checkpoint_path,
                   save_directory=pathlib.Path.home(),
                   name='best_model.pt',
                   neptune_logger=neptune_logger)
+=======
+trainer.test(ckpt_path='best', test_dataloaders=dataloader_test)
+>>>>>>> f6c315b3b93d1effc92d449855a3da2ee8d3e4d2
