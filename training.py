@@ -84,8 +84,8 @@ from pytorch_lightning import seed_everything
 seed_everything(params['SEED'])
 
 # training validation test split
-inputs_train, inputs_valid, inputs_test = inputs[:500], inputs[501:650], inputs[651:950]
-targets_train, targets_valid, targets_test = targets[:500], targets[501:650], targets[651:950]
+inputs_train, inputs_valid, inputs_test = inputs[:700], inputs[701:1000], inputs[1001:2000]
+targets_train, targets_valid, targets_test = targets[:700], targets[701:1000], targets[1001:2000]
 
 # dataset training
 dataset_train = ObjectDetectionDataSet(inputs=inputs_train,
@@ -116,8 +116,7 @@ dataloader_train = DataLoader(dataset=dataset_train,
                               batch_size=params['BATCH_SIZE'],
                               shuffle=True,
                               num_workers=6,
-                              collate_fn=collate_double,
-                              pin_memory=True # Not present before
+                              collate_fn=collate_double
                               )
 
 # dataloader validation
@@ -125,8 +124,7 @@ dataloader_valid = DataLoader(dataset=dataset_valid,
                               batch_size=1,
                               shuffle=False,
                               num_workers=6,
-                              collate_fn=collate_double,
-                              pin_memory=True # Not present before
+                              collate_fn=collate_double
                               )
 
 # dataloader test
@@ -134,8 +132,7 @@ dataloader_test = DataLoader(dataset=dataset_test,
                              batch_size=1,
                              shuffle=False,
                              num_workers=6,
-                             collate_fn=collate_double,
-                              pin_memory=True # Not present before
+                             collate_fn=collate_double
                               )
 
 
