@@ -37,7 +37,7 @@ params = {'BATCH_SIZE': 16,
           }
 
 # root directory
-root = pathlib.Path("./Heads")
+root = pathlib.Path("./heads")
 
 # input and target files
 inputs = get_filenames_of_path(root / 'input')
