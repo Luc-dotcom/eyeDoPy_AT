@@ -9,32 +9,35 @@ from datasets import ObjectDetectionDataSet
 from transformations import ComposeDouble, Clip, AlbumentationWrapper, FunctionWrapperDouble
 from transformations import normalize_01
 from utils import get_filenames_of_path, collate_double, convertLabelsToDict
+import torch
+from utils import log_model_neptune
+
 
 # Activate this function only the first time to create labels.py
-#convertLabelsToDict(str("labels_txt"), str("heads/target/"))
+convertLabelsToDict(str("labels_txt"), str("heads/target/"))
 
 # hyper-parameters
 params = {'BATCH_SIZE': 16,
           'LR': 0.001,
           'PRECISION': 32,
-          'CLASSES': 5,
+          'CLASSES': 2, # 5 for all classes
           'SEED': 42,
           'PROJECT': 'Heads',
           'EXPERIMENT': 'heads',
-          'MAXEPOCHS': 400,
+          'MAXEPOCHS': 800,
           'BACKBONE': 'resnet34',
           'FPN': False,
           'ANCHOR_SIZE': ((32, 64, 128, 256, 512),),
           'ASPECT_RATIOS': ((0.5, 1.0, 2.0),),
-          'MIN_SIZE': 1024,
-          'MAX_SIZE': 1024,
+          'MIN_SIZE': 657,
+          'MAX_SIZE': 876,
           'IMG_MEAN': [0.485, 0.456, 0.406],
           'IMG_STD': [0.229, 0.224, 0.225],
           'IOU_THRESHOLD': 0.5
           }
 
 # root directory
-root = pathlib.Path("./heads")
+root = pathlib.Path("./Heads")
 
 # input and target files
 inputs = get_filenames_of_path(root / 'input')
@@ -46,9 +49,9 @@ targets.sort()
 # mapping
 mapping = {
     '1': 1,
-    '2': 2,
-    '3': 3,
-    '4': 4,
+    #'2': 2,
+    #'3': 3,
+    #'4': 4,
 }
 
 # training transformations and augmentations
@@ -81,8 +84,8 @@ from pytorch_lightning import seed_everything
 seed_everything(params['SEED'])
 
 # training validation test split
-inputs_train, inputs_valid, inputs_test = inputs[:1000], inputs[1001:1350], inputs[1351:]
-targets_train, targets_valid, targets_test = targets[:1000], targets[1001:1350], targets[1351:]
+inputs_train, inputs_valid, inputs_test = inputs[:500], inputs[501:650], inputs[651:950]
+targets_train, targets_valid, targets_test = targets[:500], targets[501:650], targets[651:950]
 
 # dataset training
 dataset_train = ObjectDetectionDataSet(inputs=inputs_train,
@@ -113,21 +116,27 @@ dataloader_train = DataLoader(dataset=dataset_train,
                               batch_size=params['BATCH_SIZE'],
                               shuffle=True,
                               num_workers=6,
-                              collate_fn=collate_double)
+                              collate_fn=collate_double,
+                              pin_memory=True # Not present before
+                              )
 
 # dataloader validation
 dataloader_valid = DataLoader(dataset=dataset_valid,
                               batch_size=1,
                               shuffle=False,
                               num_workers=6,
-                              collate_fn=collate_double)
+                              collate_fn=collate_double,
+                              pin_memory=True # Not present before
+                              )
 
 # dataloader test
 dataloader_test = DataLoader(dataset=dataset_test,
                              batch_size=1,
                              shuffle=False,
                              num_workers=6,
-                             collate_fn=collate_double)
+                             collate_fn=collate_double,
+                              pin_memory=True # Not present before
+                              )
 
 
 # neptune logger
@@ -152,13 +161,20 @@ neptune_logger = NeptuneLogger(
 # model init
 from faster_RCNN import get_fasterRCNN_resnet
 
+# Aggiunte per caricare checkpoint
+#checkpoint = torch.load('./Experiments/heads/HEAD-35/checkpoints/epoch=198-step=6367.ckpt')
+#model_state_dict = checkpoint['hyper_parameters']['model'].state_dict()
+
 model = get_fasterRCNN_resnet(num_classes=params['CLASSES'],
                               backbone_name=params['BACKBONE'],
                               anchor_size=params['ANCHOR_SIZE'],
                               aspect_ratios=params['ASPECT_RATIOS'],
                               fpn=params['FPN'],
                               min_size=params['MIN_SIZE'],
-                              max_size=params['MAX_SIZE'])
+                              max_size=params['MAX_SIZE']
+                            )
+# Caricamento pesi
+#model.load_state_dict(model_state_dict)
 
 # lightning init
 from faster_RCNN import FasterRCNN_lightning
@@ -183,7 +199,7 @@ trainer = Trainer(gpus=1,
                   logger=neptune_logger,
                   log_every_n_steps=1,
                   num_sanity_val_steps=0,
-                  enable_pl_optimizer=False,  # False seems to be necessary for half precision
+                  enable_pl_optimizer=True,  # False seems to be necessary for half precision # FALSE BEFORE
                   )
 
 # %% start training
@@ -194,3 +210,10 @@ trainer.fit(task,
 
 # start testing
 trainer.test(ckpt_path='best', test_dataloaders=dataloader_test)
+
+# log model
+checkpoint_path = pathlib.Path(checkpoint_callback.best_model_path)
+log_model_neptune(checkpoint_path=checkpoint_path,
+                  save_directory=pathlib.Path.home(),
+                  name='best_model.pt',
+                  neptune_logger=neptune_logger)
