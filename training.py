@@ -17,7 +17,7 @@ from utils import log_model_neptune
 #convertLabelsToDict(str("labels_txt"), str("heads/target/"))
 
 # hyper-parameters
-params = {'BATCH_SIZE': 16,
+params = {'BATCH_SIZE': 64,
           'LR': 0.001,
           'PRECISION': 32,
           'CLASSES': 2, # 5 for all classes
@@ -84,8 +84,8 @@ from pytorch_lightning import seed_everything
 seed_everything(params['SEED'])
 
 # training validation test split
-inputs_train, inputs_valid, inputs_test = inputs[:700], inputs[701:1000], inputs[1001:2000]
-targets_train, targets_valid, targets_test = targets[:700], targets[701:1000], targets[1001:2000]
+inputs_train, inputs_valid, inputs_test = inputs[:2000], inputs[2001:2700], inputs[2701:4000]
+targets_train, targets_valid, targets_test = targets[:2000], targets[2001:2700], targets[2701:4000]
 
 # dataset training
 dataset_train = ObjectDetectionDataSet(inputs=inputs_train,
@@ -189,7 +189,7 @@ early_stopping_callback = EarlyStopping(monitor='Validation_mAP', patience=50, m
 # trainer init
 from pytorch_lightning import Trainer
 
-trainer = Trainer(gpus=1,
+trainer = Trainer(tpu_cores=8,
                   precision=params['PRECISION'],  # try 16 with enable_pl_optimizer=False
                   callbacks=[checkpoint_callback, learningrate_callback, early_stopping_callback],
                   default_root_dir="./Experiments",  # where checkpoints are saved to
