@@ -17,7 +17,7 @@ from utils import log_model_neptune
 #convertLabelsToDict(str("labels_txt"), str("heads/target/"))
 
 # hyper-parameters
-params = {'BATCH_SIZE': 32,
+params = {'BATCH_SIZE': 16,
           'LR': 0.001,
           'PRECISION': 32,
           'CLASSES': 2, # 5 for all classes
