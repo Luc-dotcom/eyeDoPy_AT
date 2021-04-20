@@ -2,7 +2,7 @@
 
 import torch
 
-save_path = '../Model/'
+save_path = './'
 
 # hyper-parameters
 params = {'BATCH_SIZE': 16,
