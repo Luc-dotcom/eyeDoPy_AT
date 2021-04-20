@@ -159,8 +159,8 @@ neptune_logger = NeptuneLogger(
 from faster_RCNN import get_fasterRCNN_resnet
 
 # Aggiunte per caricare checkpoint
-#checkpoint = torch.load('./Experiments/heads/HEAD-35/checkpoints/epoch=198-step=6367.ckpt')
-#model_state_dict = checkpoint['hyper_parameters']['model'].state_dict()
+checkpoint = torch.load('./Experiments/heads/HEAD-35/checkpoints/epoch=3-step=499.ckpt', map_location=torch.device('cpu'))
+model_state_dict = checkpoint['hyper_parameters']['model'].state_dict()
 
 model = get_fasterRCNN_resnet(num_classes=params['CLASSES'],
                               backbone_name=params['BACKBONE'],
@@ -171,7 +171,9 @@ model = get_fasterRCNN_resnet(num_classes=params['CLASSES'],
                               max_size=params['MAX_SIZE']
                             )
 # Caricamento pesi
-#model.load_state_dict(model_state_dict)
+model.load_state_dict(model_state_dict)
+
+
 
 # lightning init
 from faster_RCNN import FasterRCNN_lightning
