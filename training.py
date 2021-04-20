@@ -84,8 +84,8 @@ from pytorch_lightning import seed_everything
 seed_everything(params['SEED'])
 
 # training validation test split
-inputs_train, inputs_valid, inputs_test = inputs[:2000], inputs[2001:2700], inputs[2701:4000]
-targets_train, targets_valid, targets_test = targets[:2000], targets[2001:2700], targets[2701:4000]
+inputs_train, inputs_valid, inputs_test = inputs[:3000], inputs[3001:4000], inputs[4001:]
+targets_train, targets_valid, targets_test = targets[:3000], targets[3001:4000], targets[4001:]
 
 # dataset training
 dataset_train = ObjectDetectionDataSet(inputs=inputs_train,
