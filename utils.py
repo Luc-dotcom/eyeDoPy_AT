@@ -182,25 +182,25 @@ def log_checkpoint_neptune(checkpoint_path: pathlib.Path, neptune_logger):
     neptune_logger.experiment.set_property('checkpoint_name', checkpoint_path.name)
     neptune_logger.experiment.log_artifact(str(checkpoint_path))
     
-# Convert YOLO labels to dictionary label
+# Convert YOLO labels to dictionary labels
 def convertLabelsToDict(directory, save_path):
-    # IMPORTANTE
-    # Questa funzione funziona se i file txt contengono le label giuste (0, 1, 2, etc.) e le coordinate normalizzate
+
     import glob, os
     import numpy as np 
     
+    # Params to convert the coordinates from normalized to relative
     imgWidthSize = 876
     imgHeightSize = 657
-    # ciclo sui file txt della directory
+
     os.chdir(directory)
     for fileTxt in glob.glob("*.txt"):
         imgName = fileTxt
         f = open(fileTxt, "r")
         # line example -> 0 0.530469 0.281944 0.017188 0.047222
         line = f.readline()
-        # 2 Casi:
-        # Se stringa vuota, semaforo non presente, scartare
-        # Se stringa non vuota, estraggo dati
+        # 2 cases:
+        # If empty string, traffic light is not present, so skip
+        # If non empty string, convert data
         if(len(line) == 0):
             continue;
         items = line.split(" ")
@@ -214,12 +214,12 @@ def convertLabelsToDict(directory, save_path):
         x2 = xCenter + width/2 # Down-Right Corner
         y2 = yCenter + height/2 # Down-Right Corner
         
-        # Creo numpy array per labels e boxes
+        # Creation of numpty array for dictionary
         #labels = np.array([str(label)]) For all classes
         labels = np.array([str('1')])
         boxes = np.array([[x1, y1, x2, y2]])
 
-        # Creazione dizionario
+        # dictionary creation
         annotation = {
             "labels": labels,
             "boxes": boxes

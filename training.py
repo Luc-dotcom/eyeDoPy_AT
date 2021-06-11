@@ -13,7 +13,7 @@ import torch
 from utils import log_model_neptune
 
 
-# Activate this function only the first time to create labels.py
+# Activate this function only the first time to convert labels from txt (YOLO format) to .pt files
 #convertLabelsToDict(str("labels_txt"), str("heads/target/"))
 
 # hyper-parameters
@@ -158,9 +158,11 @@ neptune_logger = NeptuneLogger(
 # model init
 from faster_RCNN import get_fasterRCNN_resnet
 
-# Aggiunte per caricare checkpoint
+# In case of loading model from checkpoint
+#########################################################################
 checkpoint = torch.load('./Experiments/heads/HEAD-35/checkpoints/epoch=3-step=499.ckpt', map_location=torch.device('cpu'))
 model_state_dict = checkpoint['hyper_parameters']['model'].state_dict()
+#########################################################################
 
 model = get_fasterRCNN_resnet(num_classes=params['CLASSES'],
                               backbone_name=params['BACKBONE'],
@@ -170,9 +172,10 @@ model = get_fasterRCNN_resnet(num_classes=params['CLASSES'],
                               min_size=params['MIN_SIZE'],
                               max_size=params['MAX_SIZE']
                             )
-# Caricamento pesi
+# In case of loading weights from checkpoint
+########################################
 model.load_state_dict(model_state_dict)
-
+########################################
 
 
 # lightning init

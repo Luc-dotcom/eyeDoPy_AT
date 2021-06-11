@@ -29,7 +29,7 @@ params = {'BATCH_SIZE': 16,
 from faster_RCNN import get_fasterRCNN_resnet
 
 # Aggiunte per caricare checkpoint
-checkpoint = torch.load('./epoch=3-step=499.ckpt', map_location=torch.device('cpu'))
+checkpoint = torch.load('./epoch=150-step=28387.ckpt', map_location=torch.device('cpu'))
 model_state_dict = checkpoint['hyper_parameters']['model'].state_dict()
 
 model = get_fasterRCNN_resnet(num_classes=params['CLASSES'],
