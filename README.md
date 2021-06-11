@@ -11,5 +11,5 @@ If you want to use neptune for your own experiments, change [api_key_neptune.py]
 
 A complete jupyter notebook can be found [here](training_script.ipynb).
 
-To try the network on pedestrian traffic lights of Bologna use jupiter_for_inference.ipynb.
+To try the network on pedestrian traffic lights of Bologna use [jupiter_for_inference.ipynb](jupiter_for_inference.ipynb).
 
